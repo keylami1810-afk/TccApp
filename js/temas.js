@@ -1,0 +1,47 @@
+export const temasDoProjeto = {
+  claro: {
+    fundo: '#F4E8F8',
+    caixaInput: '#FFFFFF',
+    borda: '#D494E6',
+    botao: '#BA6AD2',
+    textoBotao: '#FFFFFF',
+    textoGeral: '#3A1D54',
+    fonteTitulo: 'System',
+  },
+  escuro: {
+    fundo: '#121212',
+    caixaInput: '#1E1E1E',
+    borda: '#333333',
+    botao: '#BB86FC',
+    textoBotao: '#000000',
+    textoGeral: '#FFFFFF',
+    fonteTitulo: 'System',
+  },
+  neon: {
+    fundo: '#0B0C10',
+    caixaInput: '#1F2833',
+    borda: '#45F3FF',
+    botao: '#45F3FF',
+    textoBotao: '#0B0C10',
+    textoGeral: '#66FCF1',
+    fonteTitulo: 'System',
+  },
+  pastel: {
+    fundo: '#FCE4EC',
+    caixaInput: '#FFFFFF',
+    borda: '#F8BBD0',
+    botao: '#EC407A',
+    textoBotao: '#FFFFFF',
+    textoGeral: '#4A1525',
+    fonteTitulo: 'System',
+  },
+  retro: {
+    fundo: '#F4EAE1',
+    caixaInput: '#FFFFFF',
+    borda: '#C6AC8F',
+    botao: '#85592A',
+    textoBotao: '#FFFFFF',
+    textoGeral: '#22333B',
+    fonteTitulo: 'System',
+  }
+};
