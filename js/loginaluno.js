@@ -62,13 +62,12 @@ export default function LoginAluno() {
       // Salva o nome do aluno no AsyncStorage
       await AsyncStorage.setItem("@nome_aluno", nomeFormatado);
 
-      router.push({
-        pathname: "/principalMFS",
-        params: { 
-          nomeUsuario: nomeFormatado,
-          pontos: 100 
-        },
-      });
+      router.replace({
+  pathname: "/carregamentoaluno",
+  params: {
+    nomeUsuario: nomeFormatado,
+  },
+});
     } catch (error) {
       Alert.alert("Erro", "Ocorreu uma falha ao realizar o login.");
     }
