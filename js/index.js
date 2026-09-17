@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -10,11 +10,39 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFonts } from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import { temasDoProjeto, obterTemaSalvo, salvarTema } from "./temas";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [nomeTema, setNomeTema] = useState("claro");
+
+  // Aponta direto para assets/fonts/AMORIA.otf subindo um nível
+  const [fontsLoaded] = useFonts({
+    Amoria: require("../assets/fonts/AMORIA.otf"),
+  });
+
+  useEffect(() => {
+    carregarTema();
+  }, []);
+
+  const carregarTema = async () => {
+    const t = await obterTemaSalvo();
+    setNomeTema(t);
+  };
+
+  const alternarTema = async () => {
+    const chaves = Object.keys(temasDoProjeto);
+    const proximaIndex = (chaves.indexOf(nomeTema) + 1) % chaves.length;
+    const novoTema = chaves[proximaIndex];
+    setNomeTema(novoTema);
+    await salvarTema(novoTema);
+  };
+
+  const tema = temasDoProjeto[nomeTema] || temasDoProjeto.claro;
 
   const fazerLogin = async () => {
     if (!email || !senha) {
@@ -23,11 +51,9 @@ export default function Login() {
     }
 
     try {
-      // Busca o nome salvo no cadastro ou usa a parte inicial do e-mail
       const nomeSalvo = await AsyncStorage.getItem(`@user_nome_${email.toLowerCase()}`);
       const nomeExibicao = nomeSalvo || email.split("@")[0];
 
-      // Salva o usuário ativo
       await AsyncStorage.setItem("@nome_usuario", nomeExibicao);
 
       router.push({
@@ -39,40 +65,92 @@ export default function Login() {
     }
   };
 
+  if (!fontsLoaded) return null;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.conteudo}>
-        <Text style={styles.titulo}>Login Malomi</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: tema.fundo }]}>
+      <View style={[styles.card, { backgroundColor: tema.cardBg }]}>
+        <View style={styles.header}>
+          <Text style={styles.iconeBorboleta}>🦋</Text>
 
-        <TextInput
-          placeholder="E-mail"
-          placeholderTextColor="#888"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+          <Text
+            style={[
+              styles.titulo,
+              {
+                color: tema.textoGeral,
+                fontFamily: "Amoria",
+              },
+            ]}
+          >
+            Malomi
+          </Text>
 
-        <TextInput
-          placeholder="Senha"
-          placeholderTextColor="#888"
-          secureTextEntry
-          style={styles.input}
-          value={senha}
-          onChangeText={setSenha}
-        />
+          <Text style={[styles.subtitulo, { color: tema.textoGeral }]}>
+            Seu dinheiro. Seu controle. Seu futuro.
+          </Text>
+        </View>
 
-        <TouchableOpacity style={styles.botao} onPress={fazerLogin}>
-          <Text style={styles.textoBotao}>Entrar</Text>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.label, { color: tema.textoGeral }]}>E-mail</Text>
+          <TextInput
+            placeholder="seu@email.com"
+            placeholderTextColor="#A1A1AA"
+            style={[
+              styles.input,
+              {
+                backgroundColor: tema.caixaInput,
+                borderColor: tema.borda,
+                color: tema.textoGeral,
+              },
+            ]}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={[styles.label, { color: tema.textoGeral }]}>Senha</Text>
+          <TextInput
+            placeholder="••••••••"
+            placeholderTextColor="#A1A1AA"
+            secureTextEntry
+            style={[
+              styles.input,
+              {
+                backgroundColor: tema.caixaInput,
+                borderColor: tema.borda,
+                color: tema.textoGeral,
+              },
+            ]}
+            value={senha}
+            onChangeText={setSenha}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.botao, { backgroundColor: tema.botao }]}
+          onPress={fazerLogin}
+        >
+          <Text style={[styles.textoBotao, { color: tema.textoBotao }]}>Entrar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push("/loginaluno")}>
-          <Text style={styles.link}>Sou Aluno (Acesso Escolar)</Text>
+          <Text style={[styles.link, { color: tema.link }]}>
+            Sou Aluno (Acesso Escolar)
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push("/cadastro")}>
-          <Text style={styles.link}>Criar uma conta</Text>
+          <Text style={[styles.link, { color: tema.link }]}>Criar uma conta</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btnTema} onPress={alternarTema}>
+          <Ionicons name="color-palette-outline" size={16} color={tema.textoGeral} />
+          <Text style={[styles.textoBtnTema, { color: tema.textoGeral }]}>
+            Tema: {nomeTema.toUpperCase()}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -82,47 +160,80 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F3E8FF",
     justifyContent: "center",
-  },
-  conteudo: {
-    paddingHorizontal: 25,
-    width: "100%",
-  },
-  titulo: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#4A154B",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  botao: {
-    backgroundColor: "#B76EA4",
-    padding: 14,
-    borderRadius: 10,
     alignItems: "center",
-    marginTop: 5,
+    padding: 20,
+  },
+  card: {
+    width: "100%",
+    maxWidth: 400,
+    borderRadius: 24,
+    padding: 28,
+    shadowColor: "#E879F9",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  header: {
+    alignItems: "center",
     marginBottom: 20,
   },
+  iconeBorboleta: {
+    fontSize: 32,
+    marginBottom: 4,
+  },
+  titulo: {
+    fontSize: 42,
+    marginBottom: 4,
+    letterSpacing: 1,
+  },
+  subtitulo: {
+    fontSize: 13,
+    opacity: 0.8,
+    textAlign: "center",
+  },
+  inputGroup: {
+    marginBottom: 14,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  input: {
+    borderWidth: 1.5,
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 15,
+  },
+  botao: {
+    padding: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 14,
+  },
   textoBotao: {
-    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
   link: {
-    color: "#B76EA4",
     textAlign: "center",
     fontWeight: "600",
-    marginTop: 12,
-    fontSize: 15,
+    marginTop: 8,
+    fontSize: 14,
+  },
+  btnTema: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    opacity: 0.6,
+    gap: 6,
+  },
+  textoBtnTema: {
+    fontSize: 11,
+    fontWeight: "600",
   },
 });
