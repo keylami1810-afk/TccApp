@@ -33,7 +33,7 @@ export default function PrincipalAluno() {
 
   const [movimentacoes, setMovimentacoes] = useState([]);
 
-  const [temaAtual, setTemaAtual] = useState("claro");
+  const [temaAtual, setTemaAtual] = useState("principal");
   const Cores = temasDoProjeto[temaAtual] || temasDoProjeto.claro;
 
   useFocusEffect(

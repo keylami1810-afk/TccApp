@@ -17,6 +17,7 @@
     "expo-linking": "~57.0.9",
     "expo-modules-core": "~57.0.17",
     "expo-router": "~57.0.20",
+    "expo-splash-screen": "~57.0.9",
     "expo-sqlite": "~57.0.2",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",

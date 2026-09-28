@@ -196,7 +196,7 @@ const MODULOS = [
 export default function AtividadesAluno() {
   const router = useRouter();
 
-  const [temaAtual, setTemaAtual] = useState("claro");
+  const [temaAtual, setTemaAtual] = useState("principal");
   const [pontos, setPontos] = useState(0);
   const [atividadesConcluidas, setAtividadesConcluidas] = useState([]);
 
