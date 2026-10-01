@@ -126,14 +126,13 @@ export default function Login() {
       }
 
       router.replace({
-        pathname: "/principal",
-        params: {
-          nomeUsuario:
-            usuario.nome,
-          usuarioId:
-            String(usuario.id),
-        },
-      });
+  pathname: "/carregamentologin",
+  params: {
+    tipo: "usuario",
+    nomeUsuario: usuario.nome,
+    usuarioId: String(usuario.id),
+  },
+});
     } catch (error) {
       console.error(
         "Erro no login:",

@@ -51,75 +51,96 @@ export default function Cadastro() {
     temasDoProjeto[temaAtual] ||
     temasDoProjeto.principal;
 
-  const cadastrar = async () => {
-    if (carregando) {
-      return;
-    }
 
-    if (!nome.trim() || !email.trim() || !senha) {
-      Alert.alert(
-        "Atenção",
-        "Preencha todos os campos."
-      );
-      return;
-    }
+const cadastrar = async () => {
+  if (carregando) {
+    return;
+  }
 
-    if (!email.includes("@")) {
-      Alert.alert(
-        "E-mail inválido",
-        "Digite um e-mail válido."
-      );
-      return;
-    }
+  const nomeLimpo = nome.trim();
+  const emailLimpo = email.trim().toLowerCase();
 
-    if (senha.length < 6) {
-      Alert.alert(
-        "Senha inválida",
-        "A senha precisa ter pelo menos 6 caracteres."
-      );
-      return;
-    }
+  if (!nomeLimpo || !emailLimpo || !senha) {
+    Alert.alert(
+      "Atenção",
+      "Preencha todos os campos."
+    );
+    return;
+  }
 
-    try {
-      setCarregando(true);
+  if (!emailLimpo.includes("@")) {
+    Alert.alert(
+      "E-mail inválido",
+      "Digite um e-mail válido."
+    );
+    return;
+  }
 
-      await cadastrarUsuarioDB(
-        nome,
-        email,
-        senha
-      );
+  if (senha.length < 6) {
+    Alert.alert(
+      "Senha inválida",
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+    return;
+  }
 
-      Alert.alert(
-        "Cadastro realizado! 🎉",
-        "Sua conta foi criada com sucesso.",
-        [
-          {
-            text: "Entrar",
-            onPress: () => {
-              router.replace("/");
-            },
+  try {
+    setCarregando(true);
+
+    await cadastrarUsuarioDB(
+      nomeLimpo,
+      emailLimpo,
+      senha
+    );
+
+    Alert.alert(
+      "Cadastro realizado! 🎉",
+      "Sua conta foi criada com sucesso.",
+      [
+        {
+          text: "Entrar",
+          onPress: () => {
+            router.replace("/");
           },
-        ]
-      );
+        },
+      ]
+    );
 
-      setNome("");
-      setEmail("");
-      setSenha("");
-    } catch (error) {
-      console.error(
-        "Erro ao cadastrar:",
-        error
-      );
+    setNome("");
+    setEmail("");
+    setSenha("");
 
+  } catch (error) {
+    console.error(
+      "Erro ao cadastrar:",
+      error
+    );
+
+    const mensagem =
+      error?.message ||
+      "Ocorreu um erro ao criar sua conta.";
+
+    if (
+      mensagem.toLowerCase().includes("unique") ||
+      mensagem.toLowerCase().includes("already") ||
+      mensagem.toLowerCase().includes("cadastrado")
+    ) {
+      Alert.alert(
+        "E-mail já cadastrado",
+        "Já existe uma conta utilizando este e-mail."
+      );
+    } else {
       Alert.alert(
         "Não foi possível cadastrar",
-        error?.message ||
-          "Ocorreu um erro ao criar sua conta."
+        mensagem
       );
-    } finally {
-      setCarregando(false);
     }
-  };
+
+  } finally {
+    setCarregando(false);
+  }
+};
+
 
   return (
     <ImageBackground

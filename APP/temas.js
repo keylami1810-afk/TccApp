@@ -1,10 +1,12 @@
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const temasDoProjeto = {
   principal: {
     nome: "Malomi",
-
     imagem: require("../assets/TemaMalomi.jpg"),
+
+    fundo: "#FFF5FA",
 
     cardBg: "rgba(249, 197, 197, 0.5)",
     caixaInput: "rgba(255, 241, 242, 0.95)",
@@ -20,8 +22,9 @@ export const temasDoProjeto = {
 
   gotico: {
     nome: "Gótico",
-
     imagem: require("../assets/TemaGotico.png"),
+
+    fundo: "#120C0F",
 
     cardBg: "rgba(20, 15, 18, 0.3)",
     caixaInput: "rgba(38, 38, 38, 0.96)",
@@ -37,8 +40,9 @@ export const temasDoProjeto = {
 
   fogo: {
     nome: "Fogo",
-
     imagem: require("../assets/TemaFogo.jpg"),
+
+    fundo: "#1F0A00",
 
     cardBg: "rgba(28, 10, 0, 0.66)",
     caixaInput: "rgba(43, 13, 0, 0.96)",
@@ -54,8 +58,9 @@ export const temasDoProjeto = {
 
   gelo: {
     nome: "Gelo",
-
     imagem: require("../assets/TemaGelo.png"),
+
+    fundo: "#F0FAFF",
 
     cardBg: "rgba(255, 255, 255, 0.45)",
     caixaInput: "rgba(224, 242, 254, 0.96)",
@@ -71,8 +76,9 @@ export const temasDoProjeto = {
 
   pastel: {
     nome: "Floral",
-
     imagem: require("../assets/TemaFlowers.jpg"),
+
+    fundo: "#FFF5FD",
 
     cardBg: "rgba(255, 255, 255, 0.34)",
     caixaInput: "rgba(252, 231, 243, 0.95)",
@@ -88,8 +94,9 @@ export const temasDoProjeto = {
 
   magico: {
     nome: "Mágico",
-
     imagem: require("../assets/TemaMagico.jpg"),
+
+    fundo: "#100B1F",
 
     cardBg: "rgba(24, 19, 43, 0.64)",
     caixaInput: "rgba(35, 27, 61, 0.96)",
@@ -105,8 +112,9 @@ export const temasDoProjeto = {
 
   retro: {
     nome: "Fantasia",
-
     imagem: require("../assets/TemaFantasia.jpg"),
+
+    fundo: "#F7F1EB",
 
     cardBg: "rgba(255, 253, 249, 0.49)",
     caixaInput: "rgba(250, 240, 230, 0.96)",
@@ -142,3 +150,4 @@ export const obterTemaSalvo = async () => {
     return "principal";
   }
 };
+

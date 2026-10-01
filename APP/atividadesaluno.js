@@ -1,4 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   View,
@@ -7,9 +12,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Animated,
+  Easing,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -21,8 +29,7 @@ const MODULOS = [
     titulo: "Começando com dinheiro",
     descricao: "Aprenda os conceitos básicos de educação financeira.",
     icone: "cash-outline",
-    cor: "#9b59b6",
-
+    cor: "#9B59B6",
     atividades: [
       {
         id: "dinheiro-1",
@@ -39,7 +46,6 @@ const MODULOS = [
         explicacao:
           "Renda é todo dinheiro que entra para uma pessoa, como salário, mesada, bolsa ou outros recebimentos.",
       },
-
       {
         id: "dinheiro-2",
         titulo: "Necessidade ou desejo?",
@@ -55,7 +61,6 @@ const MODULOS = [
         explicacao:
           "Alimentação é uma necessidade básica. Desejos podem ser importantes, mas normalmente podem esperar quando o orçamento está apertado.",
       },
-
       {
         id: "dinheiro-3",
         titulo: "Gastos",
@@ -80,8 +85,7 @@ const MODULOS = [
     descricao:
       "Aprenda a controlar seus gastos e planejar seu dinheiro.",
     icone: "bar-chart-outline",
-    cor: "#3498db",
-
+    cor: "#3498DB",
     atividades: [
       {
         id: "orcamento-1",
@@ -98,7 +102,6 @@ const MODULOS = [
         explicacao:
           "Para descobrir o saldo, subtraímos os gastos da renda: R$ 800 - R$ 500 = R$ 300.",
       },
-
       {
         id: "orcamento-2",
         titulo: "Planejamento",
@@ -114,7 +117,6 @@ const MODULOS = [
         explicacao:
           "Planejar os gastos ajuda a entender para onde seu dinheiro está indo e evita comprometer todo o orçamento.",
       },
-
       {
         id: "orcamento-3",
         titulo: "Meta financeira",
@@ -139,8 +141,7 @@ const MODULOS = [
     descricao:
       "Aprenda a tomar decisões melhores antes de comprar.",
     icone: "cart-outline",
-    cor: "#e67e22",
-
+    cor: "#E67E22",
     atividades: [
       {
         id: "consumo-1",
@@ -157,7 +158,6 @@ const MODULOS = [
         explicacao:
           "Uma promoção não significa que a compra seja necessária. Pensar antes de comprar ajuda a evitar gastos por impulso.",
       },
-
       {
         id: "consumo-2",
         titulo: "Comparando preços",
@@ -173,7 +173,6 @@ const MODULOS = [
         explicacao:
           "Comparar preços e condições pode ajudar a encontrar uma opção mais vantajosa.",
       },
-
       {
         id: "consumo-3",
         titulo: "Decisão financeira",
@@ -193,6 +192,14 @@ const MODULOS = [
   },
 ];
 
+const GRADIENTES = {
+  principal: ["#F472B6", "#EC4899", "#DB2777"],
+  roxo: ["#C084FC", "#A855F7", "#7E22CE"],
+  azul: ["#60A5FA", "#3498DB", "#2563EB"],
+  laranja: ["#FDBA74", "#F97316", "#EA580C"],
+  verde: ["#86EFAC", "#22C55E", "#16A34A"],
+};
+
 export default function AtividadesAluno() {
   const router = useRouter();
 
@@ -200,8 +207,13 @@ export default function AtividadesAluno() {
   const [pontos, setPontos] = useState(0);
   const [atividadesConcluidas, setAtividadesConcluidas] = useState([]);
 
+  const entrada = useRef(new Animated.Value(0)).current;
+  const pontosFlutuacao = useRef(new Animated.Value(0)).current;
+  const pontosScale = useRef(new Animated.Value(1)).current;
+
   const Cores =
-    temasDoProjeto[temaAtual] || temasDoProjeto.claro;
+    temasDoProjeto[temaAtual] ||
+    temasDoProjeto.principal;
 
   useFocusEffect(
     useCallback(() => {
@@ -210,15 +222,39 @@ export default function AtividadesAluno() {
           const temaSalvo =
             await AsyncStorage.getItem("@tema_app");
 
-          if (temaSalvo && temasDoProjeto[temaSalvo]) {
+          if (
+            temaSalvo &&
+            temasDoProjeto[temaSalvo]
+          ) {
             setTemaAtual(temaSalvo);
           }
 
           const pontosSalvos =
-            await AsyncStorage.getItem("@pontos_atividades");
+            await AsyncStorage.getItem(
+              "@pontos_atividades"
+            );
 
           if (pontosSalvos) {
-            setPontos(Number(pontosSalvos));
+            const novoPontos = Number(pontosSalvos);
+
+            if (novoPontos !== pontos) {
+              Animated.sequence([
+                Animated.spring(pontosScale, {
+                  toValue: 1.12,
+                  friction: 4,
+                  tension: 90,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(pontosScale, {
+                  toValue: 1,
+                  friction: 5,
+                  tension: 80,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+            }
+
+            setPontos(novoPontos);
           }
 
           const atividadesSalvas =
@@ -240,8 +276,36 @@ export default function AtividadesAluno() {
       }
 
       carregarDados();
+
+      entrada.setValue(0);
+
+      Animated.timing(entrada, {
+        toValue: 1,
+        duration: 700,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
     }, [])
   );
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pontosFlutuacao, {
+          toValue: -3,
+          duration: 1800,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pontosFlutuacao, {
+          toValue: 0,
+          duration: 1800,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   function abrirAtividade(atividade, modulo) {
     router.push({
@@ -256,37 +320,49 @@ export default function AtividadesAluno() {
   function porcentagemModulo(modulo) {
     const total = modulo.atividades.length;
 
-    const concluidas = modulo.atividades.filter(
-      (atividade) =>
-        atividadesConcluidas.includes(atividade.id)
-    ).length;
+    const concluidas =
+      modulo.atividades.filter((atividade) =>
+        atividadesConcluidas.includes(
+          atividade.id
+        )
+      ).length;
 
     if (total === 0) return 0;
 
-    return Math.round((concluidas / total) * 100);
+    return Math.round(
+      (concluidas / total) * 100
+    );
   }
 
   function moduloDesbloqueado(index) {
     if (index === 0) return true;
 
-    const moduloAnterior = MODULOS[index - 1];
+    const moduloAnterior =
+      MODULOS[index - 1];
 
-    return porcentagemModulo(moduloAnterior) === 100;
+    return (
+      porcentagemModulo(moduloAnterior) ===
+      100
+    );
   }
 
-  const totalAtividades = MODULOS.reduce(
-    (total, modulo) =>
-      total + modulo.atividades.length,
-    0
-  );
+  const totalAtividades =
+    MODULOS.reduce(
+      (total, modulo) =>
+        total + modulo.atividades.length,
+      0
+    );
 
-  const totalConcluidas = atividadesConcluidas.length;
+  const totalConcluidas =
+    atividadesConcluidas.length;
 
   const progressoGeral =
     totalAtividades === 0
       ? 0
       : Math.round(
-          (totalConcluidas / totalAtividades) * 100
+          (totalConcluidas /
+            totalAtividades) *
+            100
         );
 
   return (
@@ -304,80 +380,131 @@ export default function AtividadesAluno() {
       >
         {/* ================= TOPO ================= */}
 
-        <View
-          style={[
-            styles.topo,
-            {
-              backgroundColor: Cores.botao,
-            },
-          ]}
+        <Animated.View
+          style={{
+            opacity: entrada,
+            transform: [
+              {
+                translateY: entrada.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-25, 0],
+                }),
+              },
+            ],
+          }}
         >
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.botaoVoltar}
+          <LinearGradient
+            colors={[
+              Cores.botao,
+              "#F472B6",
+              "#C026D3",
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.topo}
           >
-            <Ionicons
-              name="arrow-back"
-              size={24}
-              color={Cores.textoBotao}
-            />
-          </TouchableOpacity>
-
-          <View style={styles.topoTexto}>
-            <Text
-              style={[
-                styles.tituloTopo,
-                {
-                  color: Cores.textoBotao,
-                },
-              ]}
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.botaoVoltar}
+              activeOpacity={0.7}
             >
-              Aprenda Finanças
-            </Text>
+              <Ionicons
+                name="arrow-back"
+                size={23}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
 
-            <Text
-              style={[
-                styles.subtituloTopo,
-                {
-                  color: Cores.textoBotao,
-                },
-              ]}
+            <View style={styles.topoTexto}>
+              <Text
+                style={styles.tituloTopo}
+              >
+                Aprenda Finanças
+              </Text>
+
+              <Text
+                style={styles.subtituloTopo}
+              >
+                Sua jornada financeira
+              </Text>
+            </View>
+
+            <Animated.View
+              style={{
+                transform: [
+                  {
+                    translateY:
+                      pontosFlutuacao,
+                  },
+                  {
+                    scale: pontosScale,
+                  },
+                ],
+              }}
             >
-              Sua jornada financeira
-            </Text>
-          </View>
+              <LinearGradient
+                colors={[
+                  "rgba(255,255,255,0.30)",
+                  "rgba(255,255,255,0.12)",
+                ]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.pontosTopo}
+              >
+                <Ionicons
+                  name="trophy-outline"
+                  size={18}
+                  color="#FFFFFF"
+                />
 
-          <View style={styles.pontosTopo}>
-            <Ionicons
-              name="trophy"
-              size={18}
-              color="#f1c40f"
-            />
+                <Text
+                  style={styles.pontosTexto}
+                >
+                  {pontos}
+                </Text>
 
-            <Text style={styles.pontosTexto}>
-              {pontos}
-            </Text>
-          </View>
-        </View>
+                <Text
+                  style={styles.xpTexto}
+                >
+                  XP
+                </Text>
+              </LinearGradient>
+            </Animated.View>
+          </LinearGradient>
+        </Animated.View>
 
         {/* ================= PROGRESSO ================= */}
 
-        <View
+        <Animated.View
           style={[
             styles.cardProgresso,
             {
-              backgroundColor: Cores.caixaInput,
+              backgroundColor:
+                Cores.caixaInput,
               borderColor: Cores.borda,
+              opacity: entrada,
+              transform: [
+                {
+                  translateY:
+                    entrada.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
+                    }),
+                },
+              ],
             },
           ]}
         >
-          <View style={styles.linhaProgresso}>
+          <View
+            style={styles.linhaProgresso}
+          >
             <View>
               <Text
                 style={[
                   styles.tituloCard,
                   {
-                    color: Cores.textoGeral,
+                    color:
+                      Cores.textoGeral,
                   },
                 ]}
               >
@@ -392,114 +519,184 @@ export default function AtividadesAluno() {
                   },
                 ]}
               >
-                {totalConcluidas} de {totalAtividades}{" "}
+                {totalConcluidas} de{" "}
+                {totalAtividades}{" "}
                 atividades concluídas
               </Text>
             </View>
 
-            <Text
-              style={[
-                styles.porcentagem,
-                {
-                  color: Cores.botao,
-                },
-              ]}
+            <LinearGradient
+              colors={GRADIENTES.principal}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.porcentagemBadge}
             >
-              {progressoGeral}%
-            </Text>
+              <Text
+                style={styles.porcentagem}
+              >
+                {progressoGeral}%
+              </Text>
+            </LinearGradient>
           </View>
 
           <View style={styles.barraFundo}>
-            <View
+            <LinearGradient
+              colors={GRADIENTES.principal}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
               style={[
                 styles.barraProgresso,
                 {
                   width: `${progressoGeral}%`,
-                  backgroundColor: Cores.botao,
                 },
               ]}
             />
           </View>
-        </View>
+        </Animated.View>
 
         {/* ================= STATUS ================= */}
 
         <View style={styles.linhaStatus}>
-          <View
-            style={[
-              styles.statusCard,
-              {
-                backgroundColor: Cores.caixaInput,
-                borderColor: Cores.borda,
-              },
-            ]}
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: entrada,
+              transform: [
+                {
+                  translateY:
+                    entrada.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
+                    }),
+                },
+              ],
+            }}
           >
-            <Text style={styles.statusIcon}>
-              🔥
-            </Text>
-
-            <View>
-              <Text
-                style={[
-                  styles.statusTitulo,
-                  {
-                    color: Cores.textoGeral,
-                  },
+            <View
+              style={[
+                styles.statusCard,
+                {
+                  backgroundColor:
+                    Cores.caixaInput,
+                  borderColor:
+                    Cores.borda,
+                },
+              ]}
+            >
+              <LinearGradient
+                colors={[
+                  "#FFB7D9",
+                  "#F472B6",
+                  "#DB2777",
                 ]}
+                style={styles.statusIconBox}
               >
-                1 dia
-              </Text>
+                <Ionicons
+                  name="flame-outline"
+                  size={22}
+                  color="#FFFFFF"
+                />
+              </LinearGradient>
 
-              <Text style={styles.statusTexto}>
-                sequência
-              </Text>
+              <View>
+                <Text
+                  style={[
+                    styles.statusTitulo,
+                    {
+                      color:
+                        Cores.textoGeral,
+                    },
+                  ]}
+                >
+                  1 dia
+                </Text>
+
+                <Text
+                  style={styles.statusTexto}
+                >
+                  sequência
+                </Text>
+              </View>
             </View>
-          </View>
+          </Animated.View>
 
-          <View
-            style={[
-              styles.statusCard,
-              {
-                backgroundColor: Cores.caixaInput,
-                borderColor: Cores.borda,
-              },
-            ]}
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: entrada,
+              transform: [
+                {
+                  translateY:
+                    entrada.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [25, 0],
+                    }),
+                },
+              ],
+            }}
           >
-            <Text style={styles.statusIcon}>
-              ⭐
-            </Text>
-
-            <View>
-              <Text
-                style={[
-                  styles.statusTitulo,
-                  {
-                    color: Cores.textoGeral,
-                  },
+            <View
+              style={[
+                styles.statusCard,
+                {
+                  backgroundColor:
+                    Cores.caixaInput,
+                  borderColor:
+                    Cores.borda,
+                },
+              ]}
+            >
+              <LinearGradient
+                colors={[
+                  "#F9A8D4",
+                  "#EC4899",
+                  "#BE185D",
                 ]}
+                style={styles.statusIconBox}
               >
-                {pontos} XP
-              </Text>
+                <Ionicons
+                  name="sparkles-outline"
+                  size={22}
+                  color="#FFFFFF"
+                />
+              </LinearGradient>
 
-              <Text style={styles.statusTexto}>
-                pontos
-              </Text>
+              <View>
+                <Text
+                  style={[
+                    styles.statusTitulo,
+                    {
+                      color:
+                        Cores.textoGeral,
+                    },
+                  ]}
+                >
+                  {pontos} XP
+                </Text>
+
+                <Text
+                  style={styles.statusTexto}
+                >
+                  pontos
+                </Text>
+              </View>
             </View>
-          </View>
+          </Animated.View>
         </View>
 
         {/* ================= JORNADA ================= */}
 
-        <Text
+        <Animated.Text
           style={[
             styles.tituloSecao,
             {
               color: Cores.textoGeral,
+              opacity: entrada,
             },
           ]}
         >
           Sua jornada
-        </Text>
+        </Animated.Text>
 
         {MODULOS.map((modulo, index) => {
           const desbloqueado =
@@ -508,318 +705,419 @@ export default function AtividadesAluno() {
           const progresso =
             porcentagemModulo(modulo);
 
+          const gradienteModulo =
+            index === 0
+              ? GRADIENTES.roxo
+              : index === 1
+              ? GRADIENTES.azul
+              : GRADIENTES.laranja;
+
           return (
-            <View
+            <Animated.View
               key={modulo.id}
-              style={[
-                styles.modulo,
-                {
-                  backgroundColor:
-                    Cores.caixaInput,
-
-                  borderColor:
-                    Cores.borda,
-
-                  opacity:
-                    desbloqueado ? 1 : 0.65,
-                },
-              ]}
+              style={{
+                opacity: entrada,
+                transform: [
+                  {
+                    translateY:
+                      entrada.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [
+                          35 + index * 10,
+                          0,
+                        ],
+                      }),
+                  },
+                ],
+              }}
             >
-              {/* CABEÇALHO DO MÓDULO */}
+              <View
+                style={[
+                  styles.modulo,
+                  {
+                    backgroundColor:
+                      Cores.caixaInput,
+                    borderColor:
+                      Cores.borda,
+                    opacity:
+                      desbloqueado
+                        ? 1
+                        : 0.65,
+                  },
+                ]}
+              >
+                {/* CABEÇALHO */}
 
-              <View style={styles.moduloTopo}>
                 <View
-                  style={[
-                    styles.iconeModulo,
-                    {
-                      backgroundColor:
-                        modulo.cor,
-                    },
-                  ]}
+                  style={
+                    styles.moduloTopo
+                  }
                 >
-                  <Ionicons
-                    name={modulo.icone}
-                    size={25}
-                    color="#fff"
-                  />
+                  <LinearGradient
+                    colors={
+                      gradienteModulo
+                    }
+                    start={{
+                      x: 0,
+                      y: 0,
+                    }}
+                    end={{
+                      x: 1,
+                      y: 1,
+                    }}
+                    style={
+                      styles.iconeModulo
+                    }
+                  >
+                    <Ionicons
+                      name={
+                        modulo.icone
+                      }
+                      size={24}
+                      color="#FFFFFF"
+                    />
+                  </LinearGradient>
+
+                  <View
+                    style={
+                      styles.moduloInfo
+                    }
+                  >
+                    <Text
+                      style={[
+                        styles.moduloTitulo,
+                        {
+                          color:
+                            Cores.textoGeral,
+                        },
+                      ]}
+                    >
+                      {modulo.titulo}
+                    </Text>
+
+                    <Text
+                      style={
+                        styles.moduloDescricao
+                      }
+                    >
+                      {modulo.descricao}
+                    </Text>
+                  </View>
+
+                  {!desbloqueado && (
+                    <View
+                      style={
+                        styles.lockBox
+                      }
+                    >
+                      <Ionicons
+                        name="lock-closed"
+                        size={16}
+                        color="#888"
+                      />
+                    </View>
+                  )}
                 </View>
 
-                <View style={styles.moduloInfo}>
+                {/* PROGRESSO */}
+
+                <View
+                  style={
+                    styles.linhaModulo
+                  }
+                >
+                  <Text
+                    style={
+                      styles.progressoTexto
+                    }
+                  >
+                    {
+                      modulo.atividades.filter(
+                        (
+                          atividade
+                        ) =>
+                          atividadesConcluidas.includes(
+                            atividade.id
+                          )
+                      ).length
+                    }{" "}
+                    /{" "}
+                    {
+                      modulo
+                        .atividades
+                        .length
+                    }{" "}
+                    atividades
+                  </Text>
+
                   <Text
                     style={[
-                      styles.moduloTitulo,
+                      styles.progressoNumero,
                       {
                         color:
-                          Cores.textoGeral,
+                          modulo.cor,
                       },
                     ]}
                   >
-                    {modulo.titulo}
-                  </Text>
-
-                  <Text
-                    style={
-                      styles.moduloDescricao
-                    }
-                  >
-                    {modulo.descricao}
+                    {progresso}%
                   </Text>
                 </View>
 
-                {!desbloqueado && (
-                  <Ionicons
-                    name="lock-closed"
-                    size={20}
-                    color="#888"
+                <View
+                  style={
+                    styles.barraFundoModulo
+                  }
+                >
+                  <LinearGradient
+                    colors={
+                      gradienteModulo
+                    }
+                    start={{
+                      x: 0,
+                      y: 0,
+                    }}
+                    end={{
+                      x: 1,
+                      y: 0,
+                    }}
+                    style={[
+                      styles.barraModulo,
+                      {
+                        width: `${progresso}%`,
+                      },
+                    ]}
                   />
-                )}
-              </View>
+                </View>
 
-              {/* PROGRESSO DO MÓDULO */}
+                {/* ATIVIDADES */}
 
-              <View style={styles.linhaModulo}>
-                <Text
-                  style={styles.progressoTexto}
-                >
-                  {
-                    modulo.atividades.filter(
-                      (atividade) =>
-                        atividadesConcluidas.includes(
-                          atividade.id
-                        )
-                    ).length
-                  }{" "}
-                  / {modulo.atividades.length}{" "}
-                  atividades
-                </Text>
+                {desbloqueado ? (
+                  <View
+                    style={
+                      styles.listaAtividades
+                    }
+                  >
+                    {modulo.atividades.map(
+                      (
+                        atividade,
+                        atividadeIndex
+                      ) => {
+                        const concluida =
+                          atividadesConcluidas.includes(
+                            atividade.id
+                          );
 
-                <Text
-                  style={[
-                    styles.progressoNumero,
-                    {
-                      color: modulo.cor,
-                    },
-                  ]}
-                >
-                  {progresso}%
-                </Text>
-              </View>
-
-              <View
-                style={styles.barraFundoModulo}
-              >
-                <View
-                  style={[
-                    styles.barraModulo,
-                    {
-                      width: `${progresso}%`,
-                      backgroundColor:
-                        modulo.cor,
-                    },
-                  ]}
-                />
-              </View>
-
-              {/* ATIVIDADES */}
-
-              {desbloqueado ? (
-                <View
-                  style={styles.listaAtividades}
-                >
-                  {modulo.atividades.map(
-                    (
-                      atividade,
-                      atividadeIndex
-                    ) => {
-                      const concluida =
-                        atividadesConcluidas.includes(
-                          atividade.id
-                        );
-
-                      return (
-                        <TouchableOpacity
-                          key={atividade.id}
-                          activeOpacity={0.75}
-                          style={[
-                            styles.atividade,
-                            {
-                              borderColor:
-                                Cores.borda,
-                              backgroundColor:
-                                concluida
-                                  ? "rgba(46,204,113,0.07)"
-                                  : "transparent",
-                            },
-                          ]}
-                          onPress={() =>
-                            abrirAtividade(
-                              atividade,
-                              modulo
-                            )
-                          }
-                        >
-                          {/* NÚMERO */}
-
-                          <View
+                        return (
+                          <TouchableOpacity
+                            key={
+                              atividade.id
+                            }
+                            activeOpacity={
+                              0.82
+                            }
                             style={[
-                              styles.numeroAtividade,
+                              styles.atividade,
                               {
+                                borderColor:
+                                  Cores.borda,
                                 backgroundColor:
                                   concluida
-                                    ? "#2ecc71"
-                                    : modulo.cor,
+                                    ? "rgba(34,197,94,0.07)"
+                                    : "transparent",
                               },
                             ]}
-                          >
-                            {concluida ? (
-                              <Ionicons
-                                name="checkmark"
-                                size={18}
-                                color="#fff"
-                              />
-                            ) : (
-                              <Text
-                                style={
-                                  styles.numeroTexto
-                                }
-                              >
-                                {atividadeIndex +
-                                  1}
-                              </Text>
-                            )}
-                          </View>
-
-                          {/* TEXTO */}
-
-                          <View
-                            style={
-                              styles.atividadeInfo
+                            onPress={() =>
+                              abrirAtividade(
+                                atividade,
+                                modulo
+                              )
                             }
                           >
-                            <Text
-                              style={[
-                                styles.atividadeTitulo,
+                            <LinearGradient
+                              colors={
+                                concluida
+                                  ? GRADIENTES.verde
+                                  : gradienteModulo
+                              }
+                              start={{
+                                x: 0,
+                                y: 0,
+                              }}
+                              end={{
+                                x: 1,
+                                y: 1,
+                              }}
+                              style={
+                                styles.numeroAtividade
+                              }
+                            >
+                              {concluida ? (
+                                <Ionicons
+                                  name="checkmark"
+                                  size={
+                                    17
+                                  }
+                                  color="#fff"
+                                />
+                              ) : (
+                                <Text
+                                  style={
+                                    styles.numeroTexto
+                                  }
+                                >
+                                  {atividadeIndex +
+                                    1}
+                                </Text>
+                              )}
+                            </LinearGradient>
+
+                            <View
+                              style={
+                                styles.atividadeInfo
+                              }
+                            >
+                              <Text
+                                style={[
+                                  styles.atividadeTitulo,
+                                  {
+                                    color:
+                                      Cores.textoGeral,
+                                  },
+                                ]}
+                              >
                                 {
-                                  color:
-                                    Cores.textoGeral,
+                                  atividade.titulo
+                                }
+                              </Text>
+
+                              <Text
+                                style={
+                                  styles.atividadeSubtitulo
+                                }
+                              >
+                                {concluida
+                                  ? "Concluída • +10 XP"
+                                  : "Toque para começar"}
+                              </Text>
+                            </View>
+
+                            <View
+                              style={[
+                                styles.setaAtividade,
+                                {
+                                  backgroundColor:
+                                    concluida
+                                      ? "rgba(34,197,94,0.12)"
+                                      : `${modulo.cor}18`,
                                 },
                               ]}
                             >
-                              {atividade.titulo}
-                            </Text>
-
-                            <Text
-                              style={
-                                styles.atividadeSubtitulo
-                              }
-                            >
-                              {concluida
-                                ? "Concluída • +10 XP"
-                                : "Toque para começar"}
-                            </Text>
-                          </View>
-
-                          {/* SETA */}
-
-                          <View
-                            style={[
-                              styles.setaAtividade,
-                              {
-                                backgroundColor:
+                              <Ionicons
+                                name={
                                   concluida
-                                    ? "rgba(46,204,113,0.12)"
-                                    : `${modulo.cor}18`,
-                              },
-                            ]}
-                          >
-                            <Ionicons
-                              name={
-                                concluida
-                                  ? "checkmark"
-                                  : "arrow-forward"
-                              }
-                              size={18}
-                              color={
-                                concluida
-                                  ? "#2ecc71"
-                                  : modulo.cor
-                              }
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      );
-                    }
-                  )}
-                </View>
-              ) : (
-                <View style={styles.bloqueio}>
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={18}
-                    color="#888"
-                  />
-
-                  <Text
+                                    ? "checkmark"
+                                    : "arrow-forward"
+                                }
+                                size={18}
+                                color={
+                                  concluida
+                                    ? "#22C55E"
+                                    : modulo.cor
+                                }
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        );
+                      }
+                    )}
+                  </View>
+                ) : (
+                  <View
                     style={
-                      styles.textoBloqueado
+                      styles.bloqueio
                     }
                   >
-                    Complete o módulo anterior
-                    para desbloquear
-                  </Text>
-                </View>
-              )}
-            </View>
+                    <Ionicons
+                      name="lock-closed-outline"
+                      size={18}
+                      color="#888"
+                    />
+
+                    <Text
+                      style={
+                        styles.textoBloqueado
+                      }
+                    >
+                      Complete o módulo
+                      anterior para
+                      desbloquear
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
           );
         })}
 
         {/* ================= DESAFIO ================= */}
 
         <TouchableOpacity
-          activeOpacity={0.85}
-          style={[
-            styles.desafio,
-            {
-              backgroundColor: Cores.botao,
-            },
-          ]}
+          activeOpacity={0.88}
+          style={styles.desafio}
         >
-          <View style={styles.desafioIcone}>
-            <Text style={styles.desafioEmoji}>
-              ⚡
-            </Text>
-          </View>
-
-          <View style={styles.desafioInfo}>
-            <Text
-              style={[
-                styles.desafioTitulo,
-                {
-                  color: Cores.textoBotao,
-                },
-              ]}
+          <LinearGradient
+            colors={[
+              "#F472B6",
+              "#DB2777",
+              "#9333EA",
+            ]}
+            start={{
+              x: 0,
+              y: 0,
+            }}
+            end={{
+              x: 1,
+              y: 1,
+            }}
+            style={styles.desafioGradiente}
+          >
+            <View
+              style={styles.desafioIcone}
             >
-              Desafio do dia
-            </Text>
+              <Ionicons
+                name="flash-outline"
+                size={25}
+                color="#FFFFFF"
+              />
+            </View>
 
-            <Text
-              style={[
-                styles.desafioTexto,
-                {
-                  color: Cores.textoBotao,
-                },
-              ]}
+            <View
+              style={styles.desafioInfo}
             >
-              Teste seus conhecimentos
-              financeiros!
-            </Text>
-          </View>
+              <Text
+                style={
+                  styles.desafioTitulo
+                }
+              >
+                Desafio do dia
+              </Text>
 
-          <Ionicons
-            name="chevron-forward"
-            size={22}
-            color={Cores.textoBotao}
-          />
+              <Text
+                style={
+                  styles.desafioTexto
+                }
+              >
+                Teste seus conhecimentos
+                financeiros.
+              </Text>
+            </View>
+
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#FFFFFF"
+            />
+          </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -832,7 +1130,7 @@ const styles = StyleSheet.create({
   },
 
   scroll: {
-    paddingBottom: 30,
+    paddingBottom: 35,
   },
 
   /* ================= TOPO ================= */
@@ -840,14 +1138,26 @@ const styles = StyleSheet.create({
   topo: {
     paddingHorizontal: 18,
     paddingVertical: 18,
-
     flexDirection: "row",
     alignItems: "center",
-
-    elevation: 4,
+    elevation: 7,
+    shadowColor: "#000",
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
   },
 
   botaoVoltar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:
+      "rgba(255,255,255,0.16)",
     marginRight: 12,
   },
 
@@ -856,36 +1166,62 @@ const styles = StyleSheet.create({
   },
 
   tituloTopo: {
+    color: "#FFFFFF",
     fontSize: 21,
-    fontWeight: "bold",
+    fontWeight: "800",
+    letterSpacing: 0.2,
   },
 
   subtituloTopo: {
+    color: "#FFFFFF",
     fontSize: 12,
     marginTop: 2,
-    opacity: 0.85,
+    opacity: 0.82,
   },
 
   pontosTopo: {
+    minWidth: 66,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 5,
+    borderWidth: 1,
+    borderColor:
+      "rgba(255,255,255,0.25)",
   },
 
   pontosTexto: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontWeight: "800",
     fontSize: 15,
+  },
+
+  xpTexto: {
+    color:
+      "rgba(255,255,255,0.75)",
+    fontSize: 9,
+    fontWeight: "700",
   },
 
   /* ================= PROGRESSO ================= */
 
   cardProgresso: {
-    margin: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
     padding: 17,
-
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    elevation: 2,
   },
 
   linhaProgresso: {
@@ -896,7 +1232,7 @@ const styles = StyleSheet.create({
 
   tituloCard: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "800",
   },
 
   textoPequeno: {
@@ -904,18 +1240,27 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
 
+  porcentagemBadge: {
+    minWidth: 51,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   porcentagem: {
-    fontSize: 22,
-    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "800",
   },
 
   barraFundo: {
     height: 9,
-    backgroundColor: "#ddd",
+    backgroundColor: "rgba(0,0,0,0.08)",
     borderRadius: 10,
-
     overflow: "hidden",
-    marginTop: 13,
+    marginTop: 14,
   },
 
   barraProgresso: {
@@ -928,46 +1273,45 @@ const styles = StyleSheet.create({
   linhaStatus: {
     flexDirection: "row",
     gap: 10,
-
     paddingHorizontal: 16,
+    marginTop: 11,
   },
 
   statusCard: {
-    flex: 1,
-
     borderWidth: 1,
-    borderRadius: 14,
-
-    padding: 13,
-
+    borderRadius: 16,
+    padding: 12,
     flexDirection: "row",
     alignItems: "center",
-
     gap: 10,
   },
 
-  statusIcon: {
-    fontSize: 25,
+  statusIconBox: {
+    width: 39,
+    height: 39,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   statusTitulo: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "800",
   },
 
   statusTexto: {
     color: "#888",
     fontSize: 11,
+    marginTop: 1,
   },
 
   /* ================= TÍTULO ================= */
 
   tituloSecao: {
     fontSize: 21,
-    fontWeight: "bold",
-
+    fontWeight: "800",
     marginHorizontal: 16,
-    marginTop: 25,
+    marginTop: 27,
     marginBottom: 12,
   },
 
@@ -976,11 +1320,17 @@ const styles = StyleSheet.create({
   modulo: {
     marginHorizontal: 16,
     marginBottom: 15,
-
-    borderRadius: 17,
+    borderRadius: 18,
     borderWidth: 1,
-
     padding: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 7,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    elevation: 2,
   },
 
   moduloTopo: {
@@ -991,12 +1341,9 @@ const styles = StyleSheet.create({
   iconeModulo: {
     width: 50,
     height: 50,
-
-    borderRadius: 14,
-
+    borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-
     marginRight: 12,
   },
 
@@ -1006,21 +1353,29 @@ const styles = StyleSheet.create({
 
   moduloTitulo: {
     fontSize: 17,
-    fontWeight: "bold",
+    fontWeight: "800",
   },
 
   moduloDescricao: {
     fontSize: 11,
     color: "#888",
-
     marginTop: 3,
     lineHeight: 16,
+  },
+
+  lockBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor:
+      "rgba(0,0,0,0.06)",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   linhaModulo: {
     flexDirection: "row",
     justifyContent: "space-between",
-
     marginTop: 15,
     marginBottom: 7,
   },
@@ -1032,15 +1387,14 @@ const styles = StyleSheet.create({
 
   progressoNumero: {
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "800",
   },
 
   barraFundoModulo: {
     height: 7,
-
-    backgroundColor: "#ddd",
+    backgroundColor:
+      "rgba(0,0,0,0.08)",
     borderRadius: 10,
-
     overflow: "hidden",
   },
 
@@ -1057,13 +1411,10 @@ const styles = StyleSheet.create({
 
   atividade: {
     minHeight: 68,
-
     borderWidth: 1,
-    borderRadius: 13,
-
+    borderRadius: 14,
     marginTop: 8,
     paddingHorizontal: 10,
-
     flexDirection: "row",
     alignItems: "center",
   },
@@ -1071,16 +1422,14 @@ const styles = StyleSheet.create({
   numeroAtividade: {
     width: 36,
     height: 36,
-
     borderRadius: 18,
-
     alignItems: "center",
     justifyContent: "center",
   },
 
   numeroTexto: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontWeight: "800",
     fontSize: 14,
   },
 
@@ -1091,22 +1440,19 @@ const styles = StyleSheet.create({
 
   atividadeTitulo: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 
   atividadeSubtitulo: {
     color: "#888",
     fontSize: 10,
-
     marginTop: 3,
   },
 
   setaAtividade: {
     width: 34,
     height: 34,
-
     borderRadius: 17,
-
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1115,11 +1461,9 @@ const styles = StyleSheet.create({
 
   bloqueio: {
     marginTop: 14,
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-
     gap: 6,
   },
 
@@ -1134,11 +1478,20 @@ const styles = StyleSheet.create({
   desafio: {
     marginHorizontal: 16,
     marginTop: 5,
+    borderRadius: 18,
+    overflow: "hidden",
+    elevation: 5,
+    shadowColor: "#DB2777",
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+  },
 
-    borderRadius: 17,
-
+  desafioGradiente: {
     padding: 17,
-
     flexDirection: "row",
     alignItems: "center",
   },
@@ -1146,18 +1499,14 @@ const styles = StyleSheet.create({
   desafioIcone: {
     width: 50,
     height: 50,
-
     borderRadius: 15,
-
     backgroundColor:
-      "rgba(255,255,255,0.2)",
-
+      "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor:
+      "rgba(255,255,255,0.25)",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  desafioEmoji: {
-    fontSize: 27,
   },
 
   desafioInfo: {
@@ -1166,13 +1515,15 @@ const styles = StyleSheet.create({
   },
 
   desafioTitulo: {
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
+    fontWeight: "800",
   },
 
   desafioTexto: {
+    color: "#FFFFFF",
     fontSize: 12,
     marginTop: 3,
-    opacity: 0.9,
+    opacity: 0.88,
   },
 });

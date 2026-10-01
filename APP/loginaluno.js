@@ -129,17 +129,18 @@ export default function LoginAluno() {
         parteNome.slice(1);
 
       await AsyncStorage.setItem(
-        "@nome_aluno",
-        nomeFormatado
-      );
+  "@nome_aluno",
+  nomeFormatado
+);
 
-      router.push({
-        pathname: "/principalMFS",
-        params: {
-          nomeUsuario: nomeFormatado,
-          pontos: 100,
-        },
-      });
+router.replace({
+  pathname: "/carregamentologin",
+  params: {
+    tipo: "aluno",
+    nomeUsuario: nomeFormatado,
+    pontos: 100,
+  },
+});
     } catch (error) {
       Alert.alert(
         "Erro",
