@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 
 import {
+  ImageBackground,
   View,
   Text,
   StyleSheet,
@@ -61,8 +62,7 @@ export default function Principal() {
 
   const Cores =
     temasDoProjeto[temaAtual] ||
-    temasDoProjeto.principal ||
-    temasDoProjeto.claro;
+    temasDoProjeto.principal;
 
   // =========================================================
   // ANIMAÇÕES
@@ -343,11 +343,11 @@ export default function Principal() {
   // =========================================================
 
   const CORES_GRAFICO = [
-    "#e74c3c",
-    "#3498db",
-    "#2ecc71",
-    "#f1c40f",
-    "#9b59b6",
+    "#C66F98",
+    "#9A78B5",
+    "#DCA7C2",
+    "#8D6B83",
+    "#E7B7CF",
   ];
 
   const dadosGrafico =
@@ -446,24 +446,10 @@ export default function Principal() {
     <SafeAreaView
       style={[
         styles.container,
-        {
-          backgroundColor:
-            temaAtual === "principal"
-              ? "#FFF5FA"
-              : temaAtual === "gelo"
-              ? "#F0FAFF"
-              : temaAtual === "fogo"
-              ? "#1F0A00"
-              : temaAtual === "gotico"
-              ? "#120C0F"
-              : temaAtual === "pastel"
-              ? "#FFF5FD"
-              : temaAtual === "magico"
-              ? "#100B1F"
-              : "#F7F1EB",
-        },
+        { backgroundColor: Cores.fundo },
       ]}
     >
+      <ImageBackground source={Cores.imagem} style={StyleSheet.absoluteFillObject} imageStyle={{ opacity: 0.12 }} resizeMode="cover" pointerEvents="none" />
       {/* =====================================================
           ÁREA DE TOQUE
       ====================================================== */}
@@ -1584,21 +1570,24 @@ const styles = StyleSheet.create({
 
   topo: {
     paddingHorizontal: 20,
-    paddingVertical: 18,
+    paddingTop: 20,
+    paddingBottom: 23,
     flexDirection: "row",
-    justifyContent:
-      "space-between",
+    justifyContent: "space-between",
     alignItems: "center",
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    elevation: 5,
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    elevation: 7,
+    shadowColor: "#35172F",
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 7 },
   },
 
   nomeUsuario: {
-    fontSize: 21,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: -0.45,
   },
 
   subtitulo: {
@@ -1634,26 +1623,27 @@ const styles = StyleSheet.create({
   },
 
   resumoCards: {
-    flexDirection:
-      "row",
-    justifyContent:
-      "space-between",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 14,
-    marginTop: 18,
-    marginBottom: 12,
+    marginTop: 20,
+    marginBottom: 13,
+    gap: 8,
   },
 
   card: {
-    width: "31.5%",
-    paddingVertical: 13,
-    paddingHorizontal: 6,
-    borderRadius: 17,
-    alignItems:
-      "center",
+    flex: 1,
+    minWidth: 0,
+    paddingVertical: 15,
+    paddingHorizontal: 5,
+    borderRadius: 20,
+    alignItems: "center",
     borderWidth: 1,
-    elevation: 2,
-    shadowOpacity: 0.06,
-    shadowRadius: 5,
+    elevation: 3,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
   },
 
   iconeCard: {
@@ -1681,14 +1671,15 @@ const styles = StyleSheet.create({
   boasVindasFinanceiras: {
     marginHorizontal: 15,
     marginTop: 8,
-    padding: 22,
-    borderRadius: 24,
+    padding: 24,
+    borderRadius: 26,
     borderWidth: 1,
-    alignItems:
-      "center",
-    elevation: 2,
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    alignItems: "center",
+    elevation: 3,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
   },
 
   iconeBoasVindas: {
@@ -1770,16 +1761,18 @@ const styles = StyleSheet.create({
 
   item: {
     marginHorizontal: 15,
-    marginVertical: 4,
-    padding: 13,
-    borderRadius: 13,
-    flexDirection:
-      "row",
-    justifyContent:
-      "space-between",
-    alignItems:
-      "center",
+    marginVertical: 5,
+    padding: 15,
+    borderRadius: 17,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderWidth: 1,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.035,
+    shadowRadius: 7,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
   },
 
   itemDesc: {
@@ -1796,11 +1789,16 @@ const styles = StyleSheet.create({
 
   graficoContainer: {
     marginHorizontal: 15,
-    marginTop: 15,
-    borderRadius: 22,
+    marginTop: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingVertical: 18,
+    paddingHorizontal: 9,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.055,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 2,
   },
 
   tituloGraficoLinha: {
@@ -1854,20 +1852,21 @@ const styles = StyleSheet.create({
   },
 
   menuInferior: {
-    flexDirection:
-      "row",
-    justifyContent:
-      "space-around",
-    alignItems:
-      "center",
-    paddingVertical: 10,
-    position:
-      "absolute",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingTop: 12,
+    paddingBottom: 13,
+    position: "absolute",
     bottom: 0,
     width: "100%",
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-    elevation: 10,
+    borderTopLeftRadius: 26,
+    borderTopRightRadius: 26,
+    elevation: 12,
+    shadowColor: "#25101F",
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: -4 },
   },
 
   menuTexto: {
@@ -1955,8 +1954,15 @@ const styles = StyleSheet.create({
 
   caixaModal: {
     margin: 20,
-    padding: 20,
-    borderRadius: 20,
+    padding: 22,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.72)",
+    elevation: 10,
+    shadowColor: "#25101F",
+    shadowOpacity: 0.16,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
   },
 
   modalTitulo: {
@@ -1970,16 +1976,21 @@ const styles = StyleSheet.create({
 
   input: {
     borderWidth: 1,
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    paddingHorizontal: 13,
+    paddingVertical: 12,
+    borderRadius: 13,
+    marginBottom: 11,
+    fontSize: 14,
+    backgroundColor: "rgba(255,255,255,0.55)",
   },
 
   salvar: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems:
-      "center",
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: "center",
+    elevation: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 7,
   },
 });
 

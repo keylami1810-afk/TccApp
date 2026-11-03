@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ImageBackground,
   StatusBar,
   Dimensions,
 } from "react-native";
@@ -23,7 +22,6 @@ import { Ionicons } from "@expo/vector-icons";
 import {
   temasDoProjeto,
   obterTemaSalvo,
-  salvarTema,
 } from "./temas";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
@@ -61,22 +59,7 @@ export default function LoginAluno() {
     setNomeTema(temaSalvo);
   };
 
-  const alternarTema = async () => {
-    const chaves = Object.keys(temasDoProjeto);
 
-    const indiceAtual = chaves.indexOf(nomeTema);
-
-    const proximaIndex =
-      indiceAtual === -1
-        ? 0
-        : (indiceAtual + 1) % chaves.length;
-
-    const novoTema = chaves[proximaIndex];
-
-    setNomeTema(novoTema);
-
-    await salvarTema(novoTema);
-  };
 
   const tema =
     temasDoProjeto[nomeTema] ||
@@ -168,24 +151,14 @@ router.replace({
       />
 
       {/* FUNDO DA TELA */}
-      <ImageBackground
-        source={tema.imagem}
-        style={styles.background}
-        resizeMode="cover"
-        imageStyle={styles.backgroundImage}
-      >
+      <View style={styles.background}>
 
         {/* CAMADA LEVE PARA MELHORAR A LEITURA */}
         <View
           style={[
             styles.overlay,
             {
-              backgroundColor:
-                nomeTema === "gelo" ||
-                nomeTema === "pastel" ||
-                nomeTema === "retro"
-                  ? "rgba(255,255,255,0.08)"
-                  : "rgba(0,0,0,0.10)",
+              backgroundColor: "rgba(255,248,253,0.45)",
             },
           ]}
         />
@@ -357,37 +330,11 @@ router.replace({
               </Text>
             </TouchableOpacity>
 
-            {/* TROCAR TEMA */}
-            <TouchableOpacity
-              style={styles.btnTema}
-              onPress={alternarTema}
-              activeOpacity={0.7}
-            >
-
-              <Ionicons
-                name="color-palette-outline"
-                size={18}
-                color={tema.textoGeral}
-              />
-
-              <Text
-                style={[
-                  styles.textoBtnTema,
-                  {
-                    color: tema.textoGeral,
-                  },
-                ]}
-              >
-                Tema: {tema.nome.toUpperCase()}
-              </Text>
-
-            </TouchableOpacity>
-
           </View>
 
         </View>
 
-      </ImageBackground>
+      </View>
     </View>
   );
 }
@@ -398,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    backgroundColor: "#000",
+    backgroundColor: "#FFF8FD",
   },
 
   background: {
@@ -410,6 +357,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     width: "100%",
     height: "100%",
+    opacity: 0.30,
   },
 
   overlay: {

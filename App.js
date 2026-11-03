@@ -3,6 +3,6 @@ import { View } from 'react-native';
 
 export default function App() {
   // Esse arquivo apenas serve de ponte para o Expo Router abrir a sua pasta "app"
-  const ctx = require.context('./APP');
+  const ctx = require.context('./app');
   return <ExpoRoot context={ctx} />;
 }

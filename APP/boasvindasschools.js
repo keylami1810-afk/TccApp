@@ -56,15 +56,19 @@ export default function BoasVindasSchools() {
     });
   }
 
-  function pular() {
+  function finalizarIntroducao() {
     router.replace("/principalMFS");
+  }
+
+  function pular() {
+    finalizarIntroducao();
   }
 
   function continuar() {
     if (pagina < telas.length - 1) {
       mudarPagina(pagina + 1);
     } else {
-      router.replace("/principalMFS");
+      finalizarIntroducao();
     }
   }
 

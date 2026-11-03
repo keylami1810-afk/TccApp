@@ -191,12 +191,8 @@ export default function CarregamentoLogin() {
      * Vai para a tela correta
      */
     if (tipo === "aluno") {
-      router.replace({
-        pathname: "/principalMFS",
-        params: {
-          pontos: params.pontos || 0,
-        },
-      });
+      // A apresentação aparece ao entrar na conta de aluno, nunca ao abrir atividades.
+      router.replace("/boasvindasschools");
     } else {
       router.replace({
         pathname: "/principal",

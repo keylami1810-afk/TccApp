@@ -19,161 +19,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { temasDoProjeto } from "./temas";
+import { ATIVIDADES as ATIVIDADES_DADOS } from "./atividadesDados";
 
-const ATIVIDADES = [
-  {
-    id: "dinheiro-1",
-    modulo: 1,
-    titulo: "O que é renda?",
-    pergunta:
-      "O que podemos considerar como renda de uma pessoa?",
-    opcoes: [
-      "O dinheiro que entra para a pessoa",
-      "Somente o dinheiro guardado",
-      "Somente o dinheiro gasto",
-      "Apenas dinheiro recebido de amigos",
-    ],
-    resposta: 0,
-    explicacao:
-      "Renda é todo dinheiro que entra para uma pessoa, como salário, mesada, bolsa ou outros recebimentos.",
-  },
-
-  {
-    id: "dinheiro-2",
-    modulo: 1,
-    titulo: "Necessidade ou desejo?",
-    pergunta:
-      "Você tem R$ 50 e precisa escolher entre comprar comida ou um jogo. Qual representa uma necessidade básica?",
-    opcoes: [
-      "Comprar o jogo",
-      "Comprar comida",
-      "Comprar uma roupa por diversão",
-      "Comprar um acessório",
-    ],
-    resposta: 1,
-    explicacao:
-      "Alimentação é uma necessidade básica. Desejos podem ser importantes, mas normalmente podem esperar quando o orçamento está apertado.",
-  },
-
-  {
-    id: "dinheiro-3",
-    modulo: 1,
-    titulo: "Gastos",
-    pergunta:
-      "Qual destas opções representa melhor um gasto?",
-    opcoes: [
-      "Receber salário",
-      "Guardar dinheiro",
-      "Pagar uma conta",
-      "Receber uma mesada",
-    ],
-    resposta: 2,
-    explicacao:
-      "Um gasto acontece quando você utiliza dinheiro para comprar algo ou pagar por um serviço.",
-  },
-
-  {
-    id: "orcamento-1",
-    modulo: 2,
-    titulo: "Quanto sobrou?",
-    pergunta:
-      "Você recebeu R$ 800 e gastou R$ 500. Quanto dinheiro sobrou?",
-    opcoes: [
-      "R$ 200",
-      "R$ 250",
-      "R$ 300",
-      "R$ 400",
-    ],
-    resposta: 2,
-    explicacao:
-      "Para descobrir o saldo, subtraímos os gastos da renda: R$ 800 - R$ 500 = R$ 300.",
-  },
-
-  {
-    id: "orcamento-2",
-    modulo: 2,
-    titulo: "Planejamento",
-    pergunta:
-      "Qual é uma boa prática para organizar seu orçamento?",
-    opcoes: [
-      "Gastar todo o dinheiro assim que receber",
-      "Não acompanhar os gastos",
-      "Planejar quanto será gasto e quanto será guardado",
-      "Comprar primeiro e pensar depois",
-    ],
-    resposta: 2,
-    explicacao:
-      "Planejar os gastos ajuda a entender para onde seu dinheiro está indo e evita comprometer todo o orçamento.",
-  },
-
-  {
-    id: "orcamento-3",
-    modulo: 2,
-    titulo: "Meta financeira",
-    pergunta:
-      "Você quer comprar algo que custa R$ 300. Qual atitude ajuda a alcançar essa meta?",
-    opcoes: [
-      "Guardar uma quantia regularmente",
-      "Gastar todo o dinheiro disponível",
-      "Ignorar quanto custa o produto",
-      "Fazer várias compras por impulso",
-    ],
-    resposta: 0,
-    explicacao:
-      "Definir uma meta e guardar uma quantia regularmente torna mais fácil alcançar um objetivo financeiro.",
-  },
-
-  {
-    id: "consumo-1",
-    modulo: 3,
-    titulo: "Compra por impulso",
-    pergunta:
-      "Você viu um produto em promoção, mas não precisava dele. O que é mais consciente?",
-    opcoes: [
-      "Comprar imediatamente porque está em promoção",
-      "Comprar vários para aproveitar",
-      "Pensar se realmente precisa antes de comprar",
-      "Usar todo o dinheiro disponível",
-    ],
-    resposta: 2,
-    explicacao:
-      "Uma promoção não significa que a compra seja necessária. Pensar antes de comprar ajuda a evitar gastos por impulso.",
-  },
-
-  {
-    id: "consumo-2",
-    modulo: 3,
-    titulo: "Comparando preços",
-    pergunta:
-      "Duas lojas vendem o mesmo produto. O que você deve fazer antes de comprar?",
-    opcoes: [
-      "Comprar na primeira loja",
-      "Comparar os preços e condições",
-      "Escolher sempre o produto mais caro",
-      "Comprar sem verificar o preço",
-    ],
-    resposta: 1,
-    explicacao:
-      "Comparar preços e condições pode ajudar a encontrar uma opção mais vantajosa.",
-  },
-
-  {
-    id: "consumo-3",
-    modulo: 3,
-    titulo: "Decisão financeira",
-    pergunta:
-      "Você tem pouco dinheiro disponível este mês. Qual atitude é mais adequada?",
-    opcoes: [
-      "Gastar tudo com lazer",
-      "Ignorar as contas",
-      "Priorizar necessidades e controlar os gastos",
-      "Fazer compras por impulso",
-    ],
-    resposta: 2,
-    explicacao:
-      "Quando o dinheiro está limitado, é importante priorizar necessidades e controlar os gastos.",
-  },
-];
+const ATIVIDADES = ATIVIDADES_DADOS;
 
 export default function Atividade() {
   const router = useRouter();
@@ -186,7 +34,7 @@ export default function Atividade() {
     (item) => item.id === atividadeId
   );
 
-  const [temaAtual, setTemaAtual] = useState("claro");
+  const [temaAtual, setTemaAtual] = useState("principal");
   const [respostaSelecionada, setRespostaSelecionada] =
     useState(null);
 
@@ -233,7 +81,7 @@ export default function Atividade() {
 
   const Cores =
     (temasDoProjeto && temasDoProjeto[temaAtual]) ||
-    (temasDoProjeto && temasDoProjeto.claro) || {
+    (temasDoProjeto && temasDoProjeto.principal) || {
       fundo: "#F3E8FF",
       caixaInput: "#FFFFFF",
       borda: "#DDD",
@@ -358,12 +206,36 @@ export default function Atividade() {
     }
   };
 
-  const proximaAtividade = () => {
+  const proximaAtividade = async () => {
     const indiceAtual = ATIVIDADES.findIndex(
       (item) => item.id === atividade.id
     );
 
     const proxima = ATIVIDADES[indiceAtual + 1];
+
+    // Ao terminar um módulo, só avança para o próximo se todas as questões
+    // daquele módulo estiverem concluídas. Assim, o botão não burla os bloqueios.
+    if (proxima && proxima.modulo !== atividade.modulo) {
+      try {
+        const salvas = await AsyncStorage.getItem("@atividades_concluidas");
+        const concluidas = salvas ? JSON.parse(salvas) : [];
+        const atividadesDoModulo = ATIVIDADES.filter(
+          (item) => item.modulo === atividade.modulo
+        );
+        const moduloCompleto = atividadesDoModulo.every(
+          (item) => concluidas.includes(item.id)
+        );
+
+        if (!moduloCompleto) {
+          router.replace("/atividadesaluno");
+          return;
+        }
+      } catch (error) {
+        console.log("Erro ao conferir o progresso do módulo:", error);
+        router.replace("/atividadesaluno");
+        return;
+      }
+    }
 
     if (!proxima) {
       router.replace("/atividadesaluno");

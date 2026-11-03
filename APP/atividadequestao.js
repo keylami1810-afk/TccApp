@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { temas } from "./temas";
+import { temasDoProjeto } from "./temas";
 
 const ATIVIDADES = {
   renda: {
@@ -75,7 +75,7 @@ export default function AtividadeQuestao() {
 
   const atividade = ATIVIDADES[params.id];
 
-  const [tema, setTema] = useState(temas.claro);
+  const [tema, setTema] = useState(temasDoProjeto.principal);
   const [selecionada, setSelecionada] = useState(null);
   const [respondeu, setRespondeu] = useState(false);
   const [acertou, setAcertou] = useState(false);
@@ -88,8 +88,8 @@ export default function AtividadeQuestao() {
     try {
       const temaSalvo = await AsyncStorage.getItem("@tema_app");
 
-      if (temaSalvo && temas[temaSalvo]) {
-        setTema(temas[temaSalvo]);
+      if (temaSalvo && temasDoProjeto[temaSalvo]) {
+        setTema(temasDoProjeto[temaSalvo]);
       }
     } catch (error) {
       console.log("Erro ao carregar tema:", error);

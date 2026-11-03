@@ -1,6 +1,8 @@
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  ImageBackground,
   View,
   Text,
   StyleSheet,
@@ -212,11 +214,11 @@ export default function PrincipalMFS() {
   ===================================================== */
 
   const CORES_GRAFICO = [
-    "#EC4899",
-    "#F472B6",
-    "#C084FC",
-    "#A78BFA",
-    "#FB7185",
+    "#C66F98",
+    "#9A78B5",
+    "#DCA7C2",
+    "#8D6B83",
+    "#E7B7CF",
   ];
 
   const dadosGrafico =
@@ -317,20 +319,7 @@ export default function PrincipalMFS() {
      FUNDO
   ===================================================== */
 
-  const fundoPrincipal =
-    temaAtual === "principal"
-      ? "#FFF7FB"
-      : temaAtual === "gelo"
-      ? "#F3FBFF"
-      : temaAtual === "fogo"
-      ? "#1F0A00"
-      : temaAtual === "gotico"
-      ? "#120C0F"
-      : temaAtual === "pastel"
-      ? "#FFF7FD"
-      : temaAtual === "magico"
-      ? "#100B1F"
-      : "#F7F1EB";
+  const fundoPrincipal = Cores.fundo;
 
   return (
     <SafeAreaView
@@ -343,6 +332,7 @@ export default function PrincipalMFS() {
       ]}
       onTouchStart={mostrarToque}
     >
+      <ImageBackground source={Cores.imagem} style={StyleSheet.absoluteFillObject} imageStyle={{ opacity: 0.12 }} resizeMode="cover" pointerEvents="none" />
       <StatusBar
         translucent
         backgroundColor="transparent"

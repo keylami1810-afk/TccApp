@@ -1,3 +1,4 @@
+
 import React, {
   useCallback,
   useEffect,
@@ -6,6 +7,7 @@ import React, {
 } from "react";
 
 import {
+  ImageBackground,
   View,
   Text,
   StyleSheet,
@@ -22,182 +24,26 @@ import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { temasDoProjeto } from "./temas";
+import { MODULOS as MODULOS_DADOS } from "./atividadesDados";
 
-const MODULOS = [
-  {
-    id: 1,
-    titulo: "Começando com dinheiro",
-    descricao: "Aprenda os conceitos básicos de educação financeira.",
-    icone: "cash-outline",
-    cor: "#9B59B6",
-    atividades: [
-      {
-        id: "dinheiro-1",
-        titulo: "O que é renda?",
-        pergunta:
-          "O que podemos considerar como renda de uma pessoa?",
-        opcoes: [
-          "O dinheiro que entra para a pessoa",
-          "Somente o dinheiro guardado",
-          "Somente o dinheiro gasto",
-          "Apenas dinheiro recebido de amigos",
-        ],
-        resposta: 0,
-        explicacao:
-          "Renda é todo dinheiro que entra para uma pessoa, como salário, mesada, bolsa ou outros recebimentos.",
-      },
-      {
-        id: "dinheiro-2",
-        titulo: "Necessidade ou desejo?",
-        pergunta:
-          "Você tem R$ 50 e precisa escolher entre comprar comida ou um jogo. Qual representa uma necessidade básica?",
-        opcoes: [
-          "Comprar o jogo",
-          "Comprar comida",
-          "Comprar uma roupa por diversão",
-          "Comprar um acessório",
-        ],
-        resposta: 1,
-        explicacao:
-          "Alimentação é uma necessidade básica. Desejos podem ser importantes, mas normalmente podem esperar quando o orçamento está apertado.",
-      },
-      {
-        id: "dinheiro-3",
-        titulo: "Gastos",
-        pergunta:
-          "Qual destas opções representa melhor um gasto?",
-        opcoes: [
-          "Receber salário",
-          "Guardar dinheiro",
-          "Pagar uma conta",
-          "Receber uma mesada",
-        ],
-        resposta: 2,
-        explicacao:
-          "Um gasto acontece quando você utiliza dinheiro para comprar algo ou pagar por um serviço.",
-      },
-    ],
-  },
+const MODULOS = MODULOS_DADOS;
 
-  {
-    id: 2,
-    titulo: "Organizando o orçamento",
-    descricao:
-      "Aprenda a controlar seus gastos e planejar seu dinheiro.",
-    icone: "bar-chart-outline",
-    cor: "#3498DB",
-    atividades: [
-      {
-        id: "orcamento-1",
-        titulo: "Quanto sobrou?",
-        pergunta:
-          "Você recebeu R$ 800 e gastou R$ 500. Quanto dinheiro sobrou?",
-        opcoes: [
-          "R$ 200",
-          "R$ 250",
-          "R$ 300",
-          "R$ 400",
-        ],
-        resposta: 2,
-        explicacao:
-          "Para descobrir o saldo, subtraímos os gastos da renda: R$ 800 - R$ 500 = R$ 300.",
-      },
-      {
-        id: "orcamento-2",
-        titulo: "Planejamento",
-        pergunta:
-          "Qual é uma boa prática para organizar seu orçamento?",
-        opcoes: [
-          "Gastar todo o dinheiro assim que receber",
-          "Não acompanhar os gastos",
-          "Planejar quanto será gasto e quanto será guardado",
-          "Comprar primeiro e pensar depois",
-        ],
-        resposta: 2,
-        explicacao:
-          "Planejar os gastos ajuda a entender para onde seu dinheiro está indo e evita comprometer todo o orçamento.",
-      },
-      {
-        id: "orcamento-3",
-        titulo: "Meta financeira",
-        pergunta:
-          "Você quer comprar algo que custa R$ 300. Qual atitude ajuda a alcançar essa meta?",
-        opcoes: [
-          "Guardar uma quantia regularmente",
-          "Gastar todo o dinheiro disponível",
-          "Ignorar quanto custa o produto",
-          "Fazer várias compras por impulso",
-        ],
-        resposta: 0,
-        explicacao:
-          "Definir uma meta e guardar uma quantia regularmente torna mais fácil alcançar um objetivo financeiro.",
-      },
-    ],
-  },
+const GRADIENTES_TEMA = {
+  principal: ["#35172F", "#7B3D66", "#B96891"],
+  gotico: ["#120C0F", "#500018", "#800020"],
+  fogo: ["#1F0A00", "#FF4500", "#FFD166"],
+  gelo: ["#0C4A6E", "#0369A1", "#0284C7"],
+  pastel: ["#78128C", "#A92BC2", "#F8B5F5"],
+  magico: ["#100B1F", "#7E22CE", "#C084FC"],
+  retro: ["#4A321B", "#6B4727", "#85592A"],
+};
 
-  {
-    id: 3,
-    titulo: "Consumo consciente",
-    descricao:
-      "Aprenda a tomar decisões melhores antes de comprar.",
-    icone: "cart-outline",
-    cor: "#E67E22",
-    atividades: [
-      {
-        id: "consumo-1",
-        titulo: "Compra por impulso",
-        pergunta:
-          "Você viu um produto em promoção, mas não precisava dele. O que é mais consciente?",
-        opcoes: [
-          "Comprar imediatamente porque está em promoção",
-          "Comprar vários para aproveitar",
-          "Pensar se realmente precisa antes de comprar",
-          "Usar todo o dinheiro disponível",
-        ],
-        resposta: 2,
-        explicacao:
-          "Uma promoção não significa que a compra seja necessária. Pensar antes de comprar ajuda a evitar gastos por impulso.",
-      },
-      {
-        id: "consumo-2",
-        titulo: "Comparando preços",
-        pergunta:
-          "Duas lojas vendem o mesmo produto. O que você deve fazer antes de comprar?",
-        opcoes: [
-          "Comprar na primeira loja",
-          "Comparar os preços e condições",
-          "Escolher sempre o produto mais caro",
-          "Comprar sem verificar o preço",
-        ],
-        resposta: 1,
-        explicacao:
-          "Comparar preços e condições pode ajudar a encontrar uma opção mais vantajosa.",
-      },
-      {
-        id: "consumo-3",
-        titulo: "Decisão financeira",
-        pergunta:
-          "Você tem pouco dinheiro disponível este mês. Qual atitude é mais adequada?",
-        opcoes: [
-          "Gastar tudo com lazer",
-          "Ignorar as contas",
-          "Priorizar necessidades e controlar os gastos",
-          "Fazer compras por impulso",
-        ],
-        resposta: 2,
-        explicacao:
-          "Quando o dinheiro está limitado, é importante priorizar necessidades e controlar os gastos.",
-      },
-    ],
-  },
-];
-
-const GRADIENTES = {
-  principal: ["#F472B6", "#EC4899", "#DB2777"],
+const GRADIENTES_MODULO = {
   roxo: ["#C084FC", "#A855F7", "#7E22CE"],
   azul: ["#60A5FA", "#3498DB", "#2563EB"],
   laranja: ["#FDBA74", "#F97316", "#EA580C"],
   verde: ["#86EFAC", "#22C55E", "#16A34A"],
+  teal: ["#5EEAD4", "#0F766E", "#134E4A"],
 };
 
 export default function AtividadesAluno() {
@@ -214,6 +60,8 @@ export default function AtividadesAluno() {
   const Cores =
     temasDoProjeto[temaAtual] ||
     temasDoProjeto.principal;
+  const gradienteAtual =
+    GRADIENTES_TEMA[temaAtual] || GRADIENTES_TEMA.principal;
 
   useFocusEffect(
     useCallback(() => {
@@ -374,6 +222,7 @@ export default function AtividadesAluno() {
         },
       ]}
     >
+      <ImageBackground source={Cores.imagem} style={StyleSheet.absoluteFillObject} imageStyle={{ opacity: 0.12 }} resizeMode="cover" pointerEvents="none" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
@@ -394,11 +243,7 @@ export default function AtividadesAluno() {
           }}
         >
           <LinearGradient
-            colors={[
-              Cores.botao,
-              "#F472B6",
-              "#C026D3",
-            ]}
+            colors={gradienteAtual}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.topo}
@@ -526,7 +371,7 @@ export default function AtividadesAluno() {
             </View>
 
             <LinearGradient
-              colors={GRADIENTES.principal}
+              colors={gradienteAtual}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.porcentagemBadge}
@@ -541,7 +386,7 @@ export default function AtividadesAluno() {
 
           <View style={styles.barraFundo}>
             <LinearGradient
-              colors={GRADIENTES.principal}
+              colors={gradienteAtual}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[
@@ -707,10 +552,12 @@ export default function AtividadesAluno() {
 
           const gradienteModulo =
             index === 0
-              ? GRADIENTES.roxo
+              ? GRADIENTES_MODULO.roxo
               : index === 1
-              ? GRADIENTES.azul
-              : GRADIENTES.laranja;
+              ? GRADIENTES_MODULO.azul
+              : index === 2
+              ? GRADIENTES_MODULO.laranja
+              : GRADIENTES_MODULO.teal;
 
           return (
             <Animated.View
@@ -936,7 +783,7 @@ export default function AtividadesAluno() {
                             <LinearGradient
                               colors={
                                 concluida
-                                  ? GRADIENTES.verde
+                                  ? GRADIENTES_MODULO.verde
                                   : gradienteModulo
                               }
                               start={{

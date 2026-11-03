@@ -1,3 +1,4 @@
+
 import React, {
   useCallback,
   useEffect,
@@ -6,6 +7,7 @@ import React, {
 } from "react";
 
 import {
+  ImageBackground,
   View,
   Text,
   StyleSheet,
@@ -30,80 +32,9 @@ import AsyncStorage from
   "@react-native-async-storage/async-storage";
 
 import { temasDoProjeto } from "./temas";
+import { MODULOS as MODULOS_DADOS } from "./atividadesDados";
 
-const MODULOS = [
-  {
-    id: 1,
-    titulo: "Começando com dinheiro",
-    descricao:
-      "Aprenda os conceitos básicos de educação financeira.",
-    icone: "cash-outline",
-    cor: "#9b59b6",
-
-    atividades: [
-      {
-        id: "dinheiro-1",
-        titulo: "O que é renda?",
-      },
-      {
-        id: "dinheiro-2",
-        titulo: "Necessidade ou desejo?",
-      },
-      {
-        id: "dinheiro-3",
-        titulo: "Gastos",
-      },
-    ],
-  },
-
-  {
-    id: 2,
-    titulo: "Organizando o orçamento",
-    descricao:
-      "Aprenda a controlar seus gastos e planejar seu dinheiro.",
-    icone: "bar-chart-outline",
-    cor: "#3498db",
-
-    atividades: [
-      {
-        id: "orcamento-1",
-        titulo: "Quanto sobrou?",
-      },
-      {
-        id: "orcamento-2",
-        titulo: "Planejamento",
-      },
-      {
-        id: "orcamento-3",
-        titulo: "Meta financeira",
-      },
-    ],
-  },
-
-  {
-    id: 3,
-    titulo: "Consumo consciente",
-    descricao:
-      "Aprenda a tomar decisões melhores antes de comprar.",
-    icone: "cart-outline",
-    cor: "#e67e22",
-
-    atividades: [
-      {
-        id: "consumo-1",
-        titulo: "Compra por impulso",
-      },
-      {
-        id: "consumo-2",
-        titulo: "Comparando preços",
-      },
-      {
-        id: "consumo-3",
-        titulo: "Decisão financeira",
-      },
-    ],
-  },
-];
+const MODULOS = MODULOS_DADOS;
 
 export default function PrincipalAluno() {
   const router = useRouter();
@@ -610,33 +541,13 @@ export default function PrincipalAluno() {
     <SafeAreaView
       style={[
         styles.container,
-        {
-          backgroundColor:
-            temaAtual ===
-            "principal"
-              ? "#FFF7FB"
-              : temaAtual ===
-                "gelo"
-              ? "#F3FBFF"
-              : temaAtual ===
-                "fogo"
-              ? "#1F0A00"
-              : temaAtual ===
-                "gotico"
-              ? "#120C0F"
-              : temaAtual ===
-                "pastel"
-              ? "#FFF7FD"
-              : temaAtual ===
-                "magico"
-              ? "#100B1F"
-              : "#F7F1EB",
-        },
+        { backgroundColor: Cores.fundo },
       ]}
       onTouchStart={
         mostrarToque
       }
     >
+      <ImageBackground source={Cores.imagem} style={StyleSheet.absoluteFillObject} imageStyle={{ opacity: 0.12 }} resizeMode="cover" pointerEvents="none" />
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -1289,7 +1200,7 @@ export default function PrincipalAluno() {
                     ]}
                     onPress={() =>
                       router.push(
-                        "/boasvindasschools"
+                        "/atividadesaluno"
                       )
                     }
                   >
@@ -1358,7 +1269,7 @@ export default function PrincipalAluno() {
           ]}
           onPress={() =>
             router.push(
-              "/boasvindasschools"
+              "/atividadesaluno"
             )
           }
         >
@@ -1439,11 +1350,17 @@ const styles = StyleSheet.create({
 
   topo: {
     minHeight: 155,
-    paddingHorizontal: 18,
-    paddingTop: 28,
-    paddingBottom: 22,
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 24,
     overflow: "hidden",
-    elevation: 7,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    elevation: 8,
+    shadowColor: "#35172F",
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 6 },
   },
 
   topoGlow: {
@@ -1560,10 +1477,15 @@ const styles = StyleSheet.create({
 
   progressoCard: {
     marginHorizontal: 16,
-    marginTop: 14,
-    padding: 16,
-    borderRadius: 17,
+    marginTop: 15,
+    padding: 18,
+    borderRadius: 22,
     borderWidth: 1,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.055,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 2,
   },
 
   progressoTopo: {
@@ -1612,11 +1534,16 @@ const styles = StyleSheet.create({
   statusCard: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 15,
-    padding: 13,
+    borderRadius: 18,
+    padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 9,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.045,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
   },
 
   statusEmoji: {
@@ -1645,9 +1572,14 @@ const styles = StyleSheet.create({
   modulo: {
     marginHorizontal: 16,
     marginBottom: 14,
-    padding: 15,
-    borderRadius: 18,
+    padding: 16,
+    borderRadius: 21,
     borderWidth: 1,
+    shadowColor: "#4A233F",
+    shadowOpacity: 0.05,
+    shadowRadius: 11,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
 
   moduloTopo: {
@@ -1743,10 +1675,15 @@ const styles = StyleSheet.create({
   desafio: {
     marginHorizontal: 16,
     marginTop: 3,
-    padding: 16,
-    borderRadius: 18,
+    padding: 17,
+    borderRadius: 21,
     flexDirection: "row",
     alignItems: "center",
+    shadowColor: "#35172F",
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
   },
 
   desafioIcone: {

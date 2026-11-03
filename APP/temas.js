@@ -6,18 +6,18 @@ export const temasDoProjeto = {
     nome: "Malomi",
     imagem: require("../assets/TemaMalomi.jpg"),
 
-    fundo: "#FFF5FA",
+    fundo: "#FFF7FB",
 
-    cardBg: "rgba(249, 197, 197, 0.5)",
-    caixaInput: "rgba(255, 241, 242, 0.95)",
-    borda: "#F472B6",
-    botao: "#EC4899",
+    cardBg: "rgba(255, 255, 255, 0.84)",
+    caixaInput: "rgba(255, 255, 255, 0.94)",
+    borda: "#EED7E7",
+    botao: "#35172F",
     textoBotao: "#FFFFFF",
-    textoGeral: "#831843",
-    link: "#DB2777",
-    badgeBg: "#FBCFE8",
+    textoGeral: "#352334",
+    link: "#B96891",
+    badgeBg: "#FBE8F2",
     fonteTitulo: "Amoria",
-    sombraCor: "#E879F9",
+    sombraCor: "#D8A9C4",
   },
 
   gotico: {
@@ -34,7 +34,7 @@ export const temasDoProjeto = {
     textoGeral: "#D4AF37",
     link: "#D4002F",
     badgeBg: "#45000C",
-    fonteTitulo: "Gotico",
+    fonteTitulo: "Amoria",
     sombraCor: "#800020",
   },
 
@@ -52,7 +52,7 @@ export const temasDoProjeto = {
     textoGeral: "#FFD700",
     link: "#FF6347",
     badgeBg: "#4A1800",
-    fonteTitulo: "Fogo",
+    fonteTitulo: "Amoria",
     sombraCor: "#FF4500",
   },
 
@@ -70,7 +70,7 @@ export const temasDoProjeto = {
     textoGeral: "#0C4A6E",
     link: "#0369A1",
     badgeBg: "#BAE6FD",
-    fonteTitulo: "Gelo",
+    fonteTitulo: "Amoria",
     sombraCor: "#38BDF8",
   },
 
@@ -88,7 +88,7 @@ export const temasDoProjeto = {
     textoGeral: "#320C42",
     link: "#78128C",
     badgeBg: "#F8B5F5",
-    fonteTitulo: "Flowers",
+    fonteTitulo: "Amoria",
     sombraCor: "#A92BC2",
   },
 
@@ -106,7 +106,7 @@ export const temasDoProjeto = {
     textoGeral: "#E9D5FF",
     link: "#C084FC",
     badgeBg: "#3B0764",
-    fonteTitulo: "Magic",
+    fonteTitulo: "Amoria",
     sombraCor: "#A855F7",
   },
 
@@ -124,7 +124,7 @@ export const temasDoProjeto = {
     textoGeral: "#22333B",
     link: "#85592A",
     badgeBg: "#E6CCB2",
-    fonteTitulo: "Fantasia",
+    fonteTitulo: "Amoria",
     sombraCor: "#85592A",
   },
 };
